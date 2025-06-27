@@ -10,13 +10,20 @@ load_dotenv()
 async def main():
     workflow_service = WorkflowService()
 
-    # Exemple 1: Writer-Reviewer
+    # Exemple 1: Writer-Reviewer avec un sujet plus approprié
     print("=== Writer-Reviewer Workflow ===")
     result = await workflow_service.execute_workflow_from_json(
-        WRITER_REVIEWER_WORKFLOW, {"topic": "AI in healthcare", "length": "1000 words"}
+        WRITER_REVIEWER_WORKFLOW,
+        {
+            "topic": "L'intelligence artificielle dans les petites entreprises",
+            "length": "800 mots",
+            "format": "article de blog",
+            "audience": "dirigeants de PME",
+        },
     )
+    print()
     print(f"Final result: {result['final_result']}")
-    print(f"Execution history: {result['execution_history']}")
+    print()
     print(f"Iterations: {result['node_iterations']}")
 
     # # Exemple 2: Hiring Process
@@ -27,6 +34,14 @@ async def main():
     # )
     # print(f"Final result: {result['final_result']}")
     # print(f"Execution history: {len(result['execution_history'])} steps")
+
+
+def display_history(history):
+    for step in history:
+        print()
+        print("=== Step History ===")
+        print(f"Node: {step['node_id']}, Input: {step['input']}, Output: {step['output']}")
+        print()
 
 
 if __name__ == "__main__":

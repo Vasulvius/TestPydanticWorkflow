@@ -1,37 +1,92 @@
 WRITER_REVIEWER_WORKFLOW = {
     "name": "Writer-Reviewer Workflow",
-    "description": "Workflow d'écriture avec révision et feedback",
-    "start_node": "writer",
+    "description": "Workflow d'écriture avec manager, révision et feedback",
+    "start_node": "manager_initial",
     "nodes": [
+        {
+            "id": "manager_initial",
+            "name": "Manager Initial",
+            "type": "process",
+            "agent_config": {
+                "type": "pydantic",
+                "model": "openai:gpt-4o-mini",
+                "name": "Manager",
+                "system_prompt": """You are a project manager. Take the user's request and reformulate it into clear, detailed instructions for a content writer.
+
+                Transform the user request into specific writing instructions including:
+                - The exact topic to cover
+                - Target length and format
+                - Key points to address
+                - Writing style and tone
+                - Any specific requirements
+
+                Return your reformulated instructions as clear, actionable guidance for the writer.""",
+            },
+        },
         {
             "id": "writer",
             "name": "Content Writer",
             "type": "process",
-            "max_iterations": 5,
+            "max_iterations": 3,
             "agent_config": {
                 "type": "pydantic",
                 "model": "openai:gpt-4o-mini",
                 "name": "Writer",
-                "system_prompt": "You are a professional content writer. Create high-quality content based on the requirements.",
+                "system_prompt": """You are a professional content writer. Follow the manager's instructions carefully to create high-quality content.
+
+                If you receive feedback from a reviewer, incorporate it to improve your content while staying true to the original instructions.
+
+                Create engaging, well-structured content that meets all the specified requirements.""",
             },
         },
         {
             "id": "reviewer",
             "name": "Content Reviewer",
             "type": "decision",
+            "max_iterations": 3,
             "agent_config": {
                 "type": "pydantic",
                 "model": "openai:gpt-4o-mini",
                 "name": "Reviewer",
-                "system_prompt": "You are a content reviewer. Evaluate the content and return {approved: true/false, feedback: 'your feedback'}.",
+                "node_type": "decision",  # Ajout pour identifier l'agent
+                "system_prompt": """You are a content reviewer. Evaluate the content against the original manager instructions.
+
+                You MUST respond with ONLY a JSON object in this EXACT format (no extra text):
+                {"approved": true, "feedback": "your feedback here", "final_review": false}
+
+                Guidelines:
+                - Set "approved" to true only if the content fully meets requirements
+                - Set "final_review" to true if this is the 3rd iteration
+                - Keep feedback concise and actionable
+                - DO NOT add any text before or after the JSON""",
+            },
+        },
+        {
+            "id": "manager_final",
+            "name": "Manager Final",
+            "type": "process",
+            "agent_config": {
+                "type": "pydantic",
+                "model": "openai:gpt-4o-mini",
+                "name": "Manager",
+                "system_prompt": """You are a project manager providing the final response to the user.
+
+                You will receive either:
+                1. An approved article - present it professionally to the user
+                2. A rejected article after maximum iterations - explain the situation and provide a summary
+
+                Format your response appropriately based on whether the content was approved or not.""",
             },
         },
         {"id": "end", "name": "End", "type": "end", "agent_config": {}},
     ],
     "edges": [
+        {"from_node": "manager_initial", "to_node": "writer"},
         {"from_node": "writer", "to_node": "reviewer"},
-        {"from_node": "reviewer", "to_node": "end", "condition": "approved"},
-        {"from_node": "reviewer", "to_node": "writer", "condition": "rejected"},
+        {"from_node": "reviewer", "to_node": "writer", "condition": "rejected_not_final"},
+        {"from_node": "reviewer", "to_node": "manager_final", "condition": "approved"},
+        {"from_node": "reviewer", "to_node": "manager_final", "condition": "final_review"},
+        {"from_node": "manager_final", "to_node": "end"},
     ],
 }
 
