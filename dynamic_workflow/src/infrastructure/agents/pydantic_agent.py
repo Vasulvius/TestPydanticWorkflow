@@ -27,7 +27,7 @@ class PydanticAgent(IAgent):
             try:
                 return self._parse_structured_response(str(result.data))
             except Exception as e:
-                print(f"[PydanticAgent] ⚠️ Erreur parsing JSON: {e}")
+                print(f"   [PydanticAgent] ⚠️ Erreur de parsing JSON pour {self.name}: {e}")
                 return {"error": "parsing_failed", "raw_response": str(result.data)}
 
         return result.data
@@ -37,7 +37,6 @@ class PydanticAgent(IAgent):
 
     def _parse_structured_response(self, response: str) -> Dict[str, Any]:
         # Nettoyer la réponse pour extraire le JSON
-        # Supprimer les retours à la ligne dans les strings JSON
         cleaned_response = re.sub(r"\n\s*", " ", response)
 
         # Chercher un JSON dans la réponse
@@ -45,20 +44,17 @@ class PydanticAgent(IAgent):
         if json_match:
             json_str = json_match.group()
             try:
-                # Nettoyer encore plus le JSON
                 json_str = re.sub(r'",\s*"', '", "', json_str)
                 parsed = json.loads(json_str)
-                print(f"✅ JSON parsé avec succès: {parsed}")
                 return parsed
-            except json.JSONDecodeError as e:
-                print(f"❌ Erreur JSON parsing: {e}")
-                print(f"JSON string: {json_str}")
+            except json.JSONDecodeError:
+                pass
 
         # Fallback: essayer de parser la réponse complète
         try:
             return json.loads(cleaned_response)
         except Exception as e:
-            print(f"[PydanticAgent] ❌ Erreur de parsing JSON complet: {e}")
+            print(f"   [PydanticAgent] ⚠️ Erreur de parsing JSON: {e}")
             # Si ça échoue, créer une structure par défaut
             if "approved" in response.lower():
                 approved = "true" in response.lower() or '"approved": true' in response.lower()

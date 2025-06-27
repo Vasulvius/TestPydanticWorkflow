@@ -25,19 +25,20 @@ class WorkflowExecutor(IWorkflowExecutor):
             iteration_count += 1
             current_node = self._find_node(workflow, current_node_id)
             if not current_node:
-                print(f"⚠️ Nœud {current_node_id} non trouvé")
+                print(f"❌ Nœud {current_node_id} non trouvé")
                 break
 
             # Vérifier les iterations max pour ce nœud spécifique
             if self._should_stop_iteration(current_node, current_node_id):
-                print(f"⚠️ Nombre max d'itérations atteint pour {current_node_id}")
+                print(f"⏹️ Max iterations atteint: {current_node.name}")
                 # Pour le reviewer, on force la final_review
                 if current_node_id == "reviewer":
                     context["force_final_review"] = True
                 else:
                     break
 
-            print(f"🔄 Exécution du nœud: {current_node.name} (iteration {self.node_iterations.get(current_node_id, 0) + 1})")
+            node_iteration = self.node_iterations.get(current_node_id, 0) + 1
+            print(f"🔄 {current_node.name} - Iteration {node_iteration}")
 
             # Exécuter le nœud
             result = await self._execute_node(current_node, current_data, context)
@@ -48,8 +49,12 @@ class WorkflowExecutor(IWorkflowExecutor):
             # Déterminer le prochain nœud
             next_node_id = self._determine_next_node(workflow, current_node_id, result, context)
 
-            print(f"➡️ Transition: {current_node_id} -> {next_node_id}")
-            print(f"📝 Résultat: {result}")
+            if next_node_id:
+                next_node = self._find_node(workflow, next_node_id)
+                next_node_name = next_node.name if next_node else next_node_id
+                print(f"   ➡️ {current_node.name} → {next_node_name}")
+            else:
+                print("   ✅ Workflow terminé")
 
             current_node_id = next_node_id
             current_data = result
@@ -100,24 +105,15 @@ class WorkflowExecutor(IWorkflowExecutor):
     ) -> Optional[str]:
         edges = [edge for edge in workflow.edges if edge.from_node == current_node_id]
 
-        print(f"🔍 Évaluation des transitions depuis {current_node_id}")
-        print(f"📊 Résultat à évaluer: {result}")
-
         for edge in edges:
-            print(f"   Condition '{edge.condition}' -> {edge.to_node}")
             if self._evaluate_condition(edge.condition, result, context, current_node_id):
-                print("   ✅ Condition satisfaite!")
                 return edge.to_node
-            else:
-                print("   ❌ Condition non satisfaite")
 
         # Si aucune condition n'est satisfaite, prendre le premier edge sans condition
         default_edge = next((edge for edge in edges if edge.condition is None), None)
         if default_edge:
-            print(f"   🔄 Utilisation de la transition par défaut -> {default_edge.to_node}")
             return default_edge.to_node
 
-        print("   ⚠️ Aucune transition trouvée")
         return None
 
     def _evaluate_condition(self, condition: Optional[str], result: Any, context: Dict[str, Any], current_node_id: str) -> bool:
@@ -130,10 +126,8 @@ class WorkflowExecutor(IWorkflowExecutor):
                 result_dict = json.loads(result.replace("'", '"'))
                 result = result_dict
             except Exception as e:
-                print(f"      [WorkflowExecutor] ❗ Erreur de conversion du résultat en dict: {e}")
+                print(f"[WorkflowExecutor] ⚠️ Erreur de parsing JSON: {e}")
                 pass
-
-        print(f"      🧮 Évaluation: condition='{condition}', result_type={type(result)}")
 
         # Conditions spéciales pour le reviewer
         if current_node_id == "reviewer" and isinstance(result, dict):
@@ -163,7 +157,6 @@ class WorkflowExecutor(IWorkflowExecutor):
             elif condition == "no_bugs" and "has_bugs" in result:
                 return result["has_bugs"] is False
 
-        print(f"      ❓ Condition '{condition}' non reconnue pour le résultat {result}")
         return False
 
     def _record_execution(self, node_id: str, input_data: Any, output_data: Any):
