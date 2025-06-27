@@ -1,6 +1,6 @@
-import json
 from typing import Any, Dict, List, Optional
 
+from ...core.condition_evaluator import ConditionEvaluator
 from ...domain.entities.workflow_definition import WorkflowDefinition
 from ...domain.entities.workflow_node import NodeType
 from ...domain.interfaces.i_workflow_executor import IWorkflowExecutor
@@ -12,6 +12,7 @@ class WorkflowExecutor(IWorkflowExecutor):
         self.agent_factory = agent_factory
         self.execution_history: List[Dict[str, Any]] = []
         self.node_iterations: Dict[str, int] = {}
+        self.condition_evaluator = ConditionEvaluator()
 
     async def execute(self, workflow: WorkflowDefinition, initial_data: Any) -> Dict[str, Any]:
         current_node_id = workflow.start_node
@@ -117,47 +118,7 @@ class WorkflowExecutor(IWorkflowExecutor):
         return None
 
     def _evaluate_condition(self, condition: Optional[str], result: Any, context: Dict[str, Any], current_node_id: str) -> bool:
-        if condition is None:
-            return True
-
-        # Convertir le résultat en dict si c'est une string JSON
-        if isinstance(result, str):
-            try:
-                result_dict = json.loads(result.replace("'", '"'))
-                result = result_dict
-            except Exception as e:
-                print(f"[WorkflowExecutor] ⚠️ Erreur de parsing JSON: {e}")
-                pass
-
-        # Conditions spéciales pour le reviewer
-        if current_node_id == "reviewer" and isinstance(result, dict):
-            approved = result.get("approved", False)
-            final_review = result.get("final_review", False) or context.get("force_final_review", False)
-            current_iteration = self.node_iterations.get("reviewer", 0)
-
-            if condition == "rejected_not_final":
-                return not approved and not final_review and current_iteration < 3
-            elif condition == "approved":
-                return approved
-            elif condition == "final_review":
-                return final_review or current_iteration >= 3
-
-        # Conditions classiques
-        if isinstance(result, dict):
-            if condition == "approved" and "approved" in result:
-                return result["approved"] is True
-            elif condition == "rejected" and "approved" in result:
-                return result["approved"] is False
-            elif condition == "complete" and "status" in result:
-                return result["status"] == "complete"
-            elif condition == "incomplete" and "status" in result:
-                return result["status"] == "incomplete"
-            elif condition == "has_bugs" and "has_bugs" in result:
-                return result["has_bugs"] is True
-            elif condition == "no_bugs" and "has_bugs" in result:
-                return result["has_bugs"] is False
-
-        return False
+        return self.condition_evaluator.evaluate(condition, result, context)
 
     def _record_execution(self, node_id: str, input_data: Any, output_data: Any):
         self.execution_history.append(

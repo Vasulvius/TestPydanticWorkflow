@@ -48,17 +48,16 @@ WRITER_REVIEWER_WORKFLOW = {
                 "type": "pydantic",
                 "model": "openai:gpt-4o-mini",
                 "name": "Reviewer",
-                "node_type": "decision",  # Ajout pour identifier l'agent
+                "node_type": "decision",
                 "system_prompt": """You are a content reviewer. Evaluate the content against the original manager instructions.
 
-                You MUST respond with ONLY a JSON object in this EXACT format (no extra text):
+                You MUST respond with ONLY a JSON object in this EXACT format:
                 {"approved": true, "feedback": "your feedback here", "final_review": false}
 
                 Guidelines:
                 - Set "approved" to true only if the content fully meets requirements
                 - Set "final_review" to true if this is the 3rd iteration
-                - Keep feedback concise and actionable
-                - DO NOT add any text before or after the JSON""",
+                - Keep feedback concise and actionable""",
             },
         },
         {
@@ -103,19 +102,35 @@ DEVELOPMENT_WORKFLOW = {
                 "type": "pydantic",
                 "model": "openai:gpt-4o-mini",
                 "name": "Analyst",
-                "system_prompt": "Analyze requirements and create detailed specifications.",
+                "system_prompt": """You are a requirement analyst. Analyze the user requirements and create detailed technical specifications.
+
+                Transform the requirements into clear development specifications including:
+                - Functional requirements
+                - Technical constraints
+                - Architecture guidelines
+                - Success criteria
+
+                Provide clear, actionable specifications for the developer.""",
             },
         },
         {
             "id": "developer",
             "name": "Developer",
-            "type": "process",
+            "type": "decision",
             "max_iterations": 3,
             "agent_config": {
                 "type": "pydantic",
                 "model": "openai:gpt-4o-mini",
                 "name": "Developer",
-                "system_prompt": "Write code based on specifications. Return {code: 'code', status: 'complete/incomplete'}.",
+                "node_type": "decision",
+                "system_prompt": """You are a software developer. Write code based on the analyst specifications.
+
+                You MUST respond with ONLY a JSON object:
+                {"complete": true, "code": "your code here", "description": "what you implemented"}
+
+                Set "complete" to:
+                - true if you have fully implemented all requirements
+                - false if you need more iterations to finish""",
             },
         },
         {
@@ -127,7 +142,15 @@ DEVELOPMENT_WORKFLOW = {
                 "type": "pydantic",
                 "model": "openai:gpt-4o-mini",
                 "name": "Tester",
-                "system_prompt": "Test the code and return {has_bugs: true/false, test_report: 'report'}.",
+                "node_type": "decision",
+                "system_prompt": """You are a software tester. Test the provided code for bugs and issues.
+
+                You MUST respond with ONLY a JSON object:
+                {"has_bugs": false, "test_report": "detailed test report", "severity": "low"}
+
+                Set "has_bugs" to:
+                - true if you find any bugs or issues
+                - false if the code passes all tests""",
             },
         },
         {
@@ -138,7 +161,7 @@ DEVELOPMENT_WORKFLOW = {
                 "type": "pydantic",
                 "model": "openai:gpt-4o-mini",
                 "name": "ReleaseManager",
-                "system_prompt": "Prepare the release and finalize deployment.",
+                "system_prompt": """You are a release manager. Prepare the final release package and deployment instructions.""",
             },
         },
         {"id": "end", "name": "End", "type": "end", "agent_config": {}},
@@ -147,8 +170,8 @@ DEVELOPMENT_WORKFLOW = {
         {"from_node": "analyst", "to_node": "developer"},
         {"from_node": "developer", "to_node": "developer", "condition": "incomplete"},
         {"from_node": "developer", "to_node": "tester", "condition": "complete"},
-        {"from_node": "tester", "to_node": "developer", "condition": "has_bugs"},
-        {"from_node": "tester", "to_node": "release_manager", "condition": "no_bugs"},
+        {"from_node": "tester", "to_node": "developer", "condition": "has_issues"},
+        {"from_node": "tester", "to_node": "release_manager", "condition": "no_issues"},
         {"from_node": "release_manager", "to_node": "end"},
     ],
 }
@@ -161,12 +184,14 @@ HIRING_WORKFLOW = {
         {
             "id": "candidate",
             "name": "Candidate",
-            "type": "start",
+            "type": "process",
             "agent_config": {
                 "type": "pydantic",
                 "model": "openai:gpt-4o-mini",
                 "name": "Candidate",
-                "system_prompt": "Process candidate application.",
+                "system_prompt": """You are processing a job candidate application.
+
+                Prepare the candidate profile for the hiring process.""",
             },
         },
         {
@@ -177,7 +202,12 @@ HIRING_WORKFLOW = {
                 "type": "pydantic",
                 "model": "openai:gpt-4o-mini",
                 "name": "HRScreener",
-                "system_prompt": "Screen candidate CV and return {passed: true/false, feedback: 'feedback'}.",
+                "node_type": "decision",
+                "system_prompt": """You are an HR recruiter conducting initial screening.
+
+                Respond with JSON: {"passed": true, "feedback": "detailed feedback", "score": 85}
+
+                Set "passed" to true if candidate should proceed, false otherwise.""",
             },
         },
         {
@@ -188,7 +218,10 @@ HIRING_WORKFLOW = {
                 "type": "pydantic",
                 "model": "openai:gpt-4o-mini",
                 "name": "TechnicalInterviewer",
-                "system_prompt": "Conduct technical interview and return {passed: true/false, score: number}.",
+                "node_type": "decision",
+                "system_prompt": """You are a technical interviewer assessing candidate's technical skills.
+
+                Respond with JSON: {"passed": true, "score": 85, "technical_notes": "assessment"}""",
             },
         },
         {
@@ -199,7 +232,10 @@ HIRING_WORKFLOW = {
                 "type": "pydantic",
                 "model": "openai:gpt-4o-mini",
                 "name": "FinalInterviewer",
-                "system_prompt": "Conduct final interview and return {hired: true/false, decision: 'reason'}.",
+                "node_type": "decision",
+                "system_prompt": """You are conducting the final interview to make the hiring decision.
+
+                Respond with JSON: {"hired": true, "decision": "detailed decision", "salary_offer": 75000}""",
             },
         },
         {"id": "employee", "name": "Employee", "type": "end", "agent_config": {}},
@@ -207,7 +243,7 @@ HIRING_WORKFLOW = {
     ],
     "edges": [
         {"from_node": "candidate", "to_node": "hr_screening"},
-        {"from_node": "hr_screening", "to_node": "rejected", "condition": "rejected"},
+        {"from_node": "hr_screening", "to_node": "rejected", "condition": "failed"},
         {"from_node": "hr_screening", "to_node": "technical_interview", "condition": "passed"},
         {"from_node": "technical_interview", "to_node": "rejected", "condition": "failed"},
         {"from_node": "technical_interview", "to_node": "final_interview", "condition": "passed"},
