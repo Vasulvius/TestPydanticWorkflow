@@ -95,7 +95,8 @@ async def main():
     state = State(user)
     feedback_graph = Graph(nodes=(WriteEmail, Feedback))
     result = await feedback_graph.run(WriteEmail(), state=state)
-    print(result.output)
+    print("Subject:", result.output.subject)
+    print(result.output.body)
     """
     Email(
         subject='Welcome to our tech blog!',
