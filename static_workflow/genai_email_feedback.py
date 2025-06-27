@@ -10,6 +10,8 @@ from pydantic_graph import BaseNode, End, Graph, GraphRunContext
 
 load_dotenv()
 
+MODEL = "openai:gpt-4o-mini"
+
 
 @dataclass
 class User:
@@ -31,7 +33,7 @@ class State:
 
 
 email_writer_agent = Agent(
-    "openai:gpt-4o-mini",
+    MODEL,
     output_type=Email,
     system_prompt="Write a welcome email to our tech blog.",
 )
@@ -64,7 +66,7 @@ class EmailOk(BaseModel):
 
 
 feedback_agent = Agent[None, EmailRequiresWrite | EmailOk](
-    "openai:gpt-4o-mini",
+    MODEL,
     output_type=EmailRequiresWrite | EmailOk,  # type: ignore
     system_prompt=("Review the email and provide feedback, email must reference the users specific interests."),
 )
