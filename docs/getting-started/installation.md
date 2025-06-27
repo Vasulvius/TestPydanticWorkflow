@@ -7,7 +7,7 @@ Cette page vous guide à travers l'installation et la configuration de Dynamic A
 ### Système
 - **Python 3.12+** (recommandé 3.12 ou supérieur)
 - **Git** pour cloner le projet
-- **UV** (recommandé) ou **pip** pour la gestion des dépendances
+- **UV**
 
 ### Clés API
 Vous aurez besoin d'au moins une clé API pour un modèle de langage :
@@ -21,8 +21,7 @@ Vous aurez besoin d'au moins une clé API pour un modèle de langage :
 ### 1. Cloner le projet
 
 ```bash
-git clone
-cd dynamic-agent-workflows
+git clone <url-du-depot-interne>
 ```
 
 ### 2. Installation avec UV (recommandé)
@@ -40,21 +39,6 @@ uv install
 source .venv/bin/activate  # Linux/Mac
 # ou
 .venv\Scripts\activate     # Windows
-```
-
-### 3. Installation avec pip
-
-```bash
-# Créer un environnement virtuel
-python -m venv venv
-
-# Activer l'environnement
-source venv/bin/activate   # Linux/Mac
-# ou
-venv\Scripts\activate      # Windows
-
-# Installer les dépendances
-pip install -r requirements.txt
 ```
 
 ## Configuration
@@ -92,11 +76,8 @@ DEFAULT_MODEL=openai:gpt-4o-mini
 Vérifiez que tout fonctionne :
 
 ```bash
-# Test basique
-python -c "import src; print('Installation OK!')"
-
 # Test avec un workflow simple
-python main.py --writer
+uv run main.py --writer
 ```
 
 Si tout se passe bien, vous devriez voir l'exécution du workflow Writer-Reviewer.
@@ -120,19 +101,6 @@ dynamic-agent-workflows/
 │   └── ...
 ├── docs/                   # Documentation
 └── examples/               # Exemples de workflows
-```
-
-### Test des composants
-
-```bash
-# Test de l'évaluateur de conditions
-python -c "from src.core.condition_evaluator import ConditionEvaluator; print('Core OK')"
-
-# Test du service principal
-python -c "from src.application.services import WorkflowService; print('Service OK')"
-
-# Test des agents
-python -c "from src.infrastructure.agents.pydantic_agent import PydanticAgent; print('Agent OK')"
 ```
 
 ## Problèmes courants
@@ -163,8 +131,6 @@ ImportError: No module named 'pydantic_ai'
 
 ```bash
 uv install --reload
-# ou
-pip install -r requirements.txt --force-reinstall
 ```
 
 ## Prochaines étapes
@@ -172,11 +138,5 @@ pip install -r requirements.txt --force-reinstall
 Une fois l'installation terminée :
 
 1. 📖 [Créez votre premier workflow](first-workflow.md)
-2. 🚀 [Apprenez à exécuter les workflows](execution.md)
-3. 📋 [Explorez les exemples](../examples/writer-reviewer.md)
-
-## Support
-
-Si vous rencontrez des problèmes :
-
-- Lisez la [FAQ](../faq.md)
+2. � [Explorez les exemples](../examples/writer-reviewer.md)
+3. � [Découvrez la syntaxe des workflows](../workflow-definition/syntax.md)

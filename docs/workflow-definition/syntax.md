@@ -252,7 +252,7 @@ Le framework valide automatiquement :
 
 ## Prochaines étapes
 
-- 🔗 [Types de nœuds](node-types.md) - Détails sur chaque type
 - 🎯 [Conditions et transitions](conditions.md) - Logique conditionnelle
 - 📊 [Échange de données](data-flow.md) - Comment les données circulent
-- 🚨 [Gestion des erreurs](error-handling.md) - Gérer les cas d'erreur
+- � [Exemples pratiques](../examples/writer-reviewer.md) - Workflows complets
+- 🏗️ [Architecture](../architecture/overview.md) - Comprendre le fonctionnement interne

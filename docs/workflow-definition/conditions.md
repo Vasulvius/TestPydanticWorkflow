@@ -290,7 +290,7 @@ Le framework affiche les évaluations de conditions :
 ### Mode détaillé
 
 ```bash
-python main.py --writer --detailed
+uv run main.py --writer --detailed
 ```
 
 Affiche le détail de chaque évaluation de condition.
@@ -378,5 +378,5 @@ result = {"approved": true, "feedback": "Content approved"}  # ✅
 ## Prochaines étapes
 
 - 📊 [Échange de données](data-flow.md) - Comment les données circulent
-- 🚨 [Gestion des erreurs](error-handling.md) - Gérer les cas d'erreur
-- 📋 [Exemples pratiques](../examples/writer-reviewer.md) - Voir des conditions en action
+-  [Exemples pratiques](../examples/writer-reviewer.md) - Voir des conditions en action
+- 🏗️ [Architecture](../architecture/overview.md) - Comprendre le fonctionnement interne

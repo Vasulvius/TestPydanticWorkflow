@@ -80,7 +80,7 @@ if __name__ == "__main__":
 ### 3. Exécution
 
 ```bash
-python run_my_workflow.py
+uv run run_my_workflow.py
 ```
 
 **Résultat attendu :**
@@ -366,4 +366,4 @@ Une fois ces premiers workflows maîtrisés :
 1. 🔄 [Explorez les workflows complexes](../examples/writer-reviewer.md)
 2. 🎯 [Apprenez les conditions avancées](../workflow-definition/conditions.md)
 3. 📊 [Comprenez l'échange de données](../workflow-definition/data-flow.md)
-4. 🚀 [Lancez des workflows en production](execution.md)
+4. 🏗️ [Découvrez l'architecture](../architecture/overview.md)

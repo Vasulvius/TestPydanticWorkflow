@@ -251,13 +251,13 @@ if final_review or current_iteration >= 3:
 ### Commande simple
 
 ```bash
-python main.py --writer
+uv run main.py --writer
 ```
 
 ### Avec détails
 
 ```bash
-python main.py --writer --detailed
+uv run main.py --writer --detailed
 ```
 
 ### Sortie attendue
@@ -358,6 +358,6 @@ python main.py --writer --detailed
 
 ## Prochaines étapes
 
-- 📋 [Processus de recrutement](hiring-process.md) - Workflow avec branchements multiples
-- 🔧 [Développement logiciel](development.md) - Workflow avec tests et debugging
+- � [Syntaxe des workflows](../workflow-definition/syntax.md) - Comprendre la syntaxe JSON complète
+- � [Conditions et transitions](../workflow-definition/conditions.md) - Gestion avancée des conditions
 - 🏗️ [Architecture](../architecture/overview.md) - Comprendre le fonctionnement interne

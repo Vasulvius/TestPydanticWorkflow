@@ -38,7 +38,11 @@ Devenir le framework de référence pour la création et l'exécution de workflo
 
 ## 🔧 Version 1.1 - Amélioration de la robustesse
 
-### Parsing et validation ⏳ En cours
+### Nouvelles fonctionnalités
+- [ ] Possibilité de créer des tools et de les donner à des agents
+
+### Parsing et validation
+- [ ] Evaluation de la viabilité d'un graphe
 - [ ] Amélioration du parsing JSON des réponses d'agents
 - [ ] Support des blocs markdown dans les réponses
 - [ ] Validation automatique des structures JSON
@@ -47,10 +51,10 @@ Devenir le framework de référence pour la création et l'exécution de workflo
 ### Gestion d'erreurs
 - [ ] Système d'exceptions personnalisées
 - [ ] Retry automatique en cas d'erreur temporaire
-- [ ] Fallback gracieux pour les agents défaillants
 - [ ] Logging structuré avec niveaux
 
 ### Monitoring et observabilité
+- [ ] Extraction d'un diagramme mermaid d'un workflow
 - [ ] Métriques de performance des workflows
 - [ ] Temps d'exécution par nœud
 - [ ] Taux de succès/échec
@@ -73,7 +77,6 @@ Devenir le framework de référence pour la création et l'exécution de workflo
 - [ ] **Conditions dynamiques** : Basées sur l'historique d'exécution
 
 ### Agents étendus
-- [ ] Support d'autres frameworks LLM (LangChain, etc.)
 - [ ] Agents personnalisés avec hooks
 - [ ] Agents de type "humain" pour intervention manuelle
 - [ ] Cache intelligent des réponses d'agents
@@ -93,114 +96,3 @@ Devenir le framework de référence pour la création et l'exécution de workflo
 - [ ] **État persistant** des exécutions en cours
 - [ ] **Reprise après crash** des workflows interrompus
 - [ ] **Versioning** des workflows
-
-### API et intégrations
-- [ ] **API REST** complète pour gestion des workflows
-- [ ] **Webhooks** pour notifications d'événements
-- [ ] **Plugin system** pour extensions tierces
-- [ ] **CLI avancée** avec commandes interactives
-
----
-
-## 🚀 Version 2.0 - Plateforme complète
-
-### Collaboration et multi-tenancy
-- [ ] **Espaces de travail** séparés par équipe
-- [ ] **Gestion des permissions** granulaire
-- [ ] **Partage de workflows** entre utilisateurs
-- [ ] **Templates marketplace** communautaire
-
-### Performance et scalabilité
-- [ ] **Exécution distribuée** sur plusieurs machines
-- [ ] **Queue système** pour workflows longs
-- [ ] **Load balancing** des agents
-- [ ] **Mise en cache intelligente**
-
-### Intelligence et optimisation
-- [ ] **Auto-optimisation** des workflows basée sur l'historique
-- [ ] **Suggestions d'amélioration** automatiques
-- [ ] **A/B testing** de workflows
-- [ ] **Prédiction de durée** d'exécution
-
-### Sécurité avancée
-- [ ] **Chiffrement** des données sensibles
-- [ ] **Audit trail** complet
-- [ ] **Isolation** des exécutions
-- [ ] **Compliance** GDPR/SOC2
-
----
-
-## 🌍 Version 2.1+ - Fonctionnalités avancées
-
-### IA et automatisation
-- [ ] **Génération automatique** de workflows à partir de descriptions
-- [ ] **Optimisation par RL** des chemins de workflow
-- [ ] **Détection d'anomalies** dans les exécutions
-- [ ] **Auto-healing** des workflows défaillants
-
-### Intégrations enterprise
-- [ ] **Active Directory / SSO** 
-- [ ] **Intégration ERP/CRM**
-- [ ] **API gouvernance**
-- [ ] **Conformité réglementaire**
-
-### Écosystème ouvert
-- [ ] **Marketplace d'agents** tiers
-- [ ] **SDK multi-langages** (JavaScript, Go, Rust)
-- [ ] **Connecteurs pré-construits** (Slack, Notion, etc.)
-- [ ] **Documentation interactive**
-
----
-
-## 📊 Métriques de succès
-
-### Adoption
-- [ ] 100+ stars GitHub
-- [ ] 10+ contributeurs actifs
-- [ ] 50+ workflows communautaires
-
-### Performance
-- [ ] Temps de démarrage < 1 seconde
-- [ ] Support de 1000+ nœuds par workflow
-- [ ] 99.9% de disponibilité
-
-### Facilité d'usage
-- [ ] Documentation complète à 100%
-- [ ] Tutoriels vidéo
-- [ ] Exemples couvrant 10+ domaines
-
----
-
-## 🤝 Comment contribuer
-
-### Développement
-- Proposez de nouvelles fonctionnalités via les discussions
-- Soumettez des PRs avec tests et documentation
-
-### Community
-- Partagez vos workflows d'exemple
-- Rapportez les bugs et problèmes
-- Aidez à améliorer la documentation
-- Participez aux discussions sur les nouvelles fonctionnalités
-
-### Sponsoring
-- Soutenez le projet sur GitHub Sponsors
-- Contribuez au financement de fonctionnalités spécifiques
-- Parrainez des événements et conférences
-
----
-
-## 📅 Timeline prévisionnel
-
-| Version | Date cible | Focus principal           |
-| ------- | ---------- | ------------------------- |
-| 1.1     | Q1 2025    | Robustesse et stabilité   |
-| 1.2     | Q2 2025    | Fonctionnalités avancées  |
-| 1.3     | Q3 2025    | Interface et intégrations |
-| 2.0     | Q4 2025    | Plateforme complète       |
-
-> **Note** : Ces dates sont indicatives et peuvent évoluer selon les contributions de la communauté et les retours utilisateurs.
-
----
-
-*Dernière mise à jour : 27 juin 2025*

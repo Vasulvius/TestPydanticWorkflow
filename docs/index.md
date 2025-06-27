@@ -19,13 +19,13 @@ Dynamic Agent Workflows vous permet de définir des workflows complexes d'agents
 
 ```bash
 # Installation
-pip install -r requirements.txt
+uv sync
 
 # Exécution d'un workflow de test
-python main.py --writer
+uv run main.py --writer
 
 # Voir toutes les options
-python main.py --help
+uv run main.py --help
 ```
 
 ## 📋 Exemples de workflows supportés
@@ -71,18 +71,8 @@ Le framework est basé sur une architecture hexagonale avec :
 - [Définition des workflows](workflow-definition/syntax.md) - Syntaxe JSON complète
 - [Exemples pratiques](examples/writer-reviewer.md) - Workflows prêts à l'emploi
 - [Architecture](architecture/overview.md) - Détails techniques
-- [API Reference](api/interfaces.md) - Documentation des interfaces
+- [Roadmap](roadmap.md) - Évolution et fonctionnalités à venir
 
-## 🛣️ Roadmap
+## 🛣️ Évolution du framework
 
-Consultez notre [roadmap](roadmap.md) pour voir les fonctionnalités à venir et contribuer au projet.
-
----
-
-## 🤝 Contribution
-
-Les contributions sont les bienvenues ! Consultez nos guidelines de contribution pour commencer.
-
-## 📄 Licence
-
-Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
+Consultez notre [roadmap](roadmap.md) pour voir les fonctionnalités à venir et les améliorations planifiées.

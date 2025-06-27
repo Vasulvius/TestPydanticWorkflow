@@ -2,9 +2,8 @@
 
 [![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
 [![Pydantic AI](https://img.shields.io/badge/pydantic--ai-0.3.4+-green.svg)](https://github.com/pydantic/pydantic-ai)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Framework Python pour créer et exécuter des workflows d'agents IA dynamiques basés sur JSON.
+Framework Python interne pour créer et exécuter des workflows d'agents IA dynamiques basés sur JSON.
 
 ## 🎯 Présentation
 
@@ -57,9 +56,6 @@ Dynamic Agent Workflows permet de définir des workflows complexes d'agents IA v
 ```bash
 # Avec UV (recommandé)
 uv install
-
-# Ou avec pip
-pip install -r requirements.txt
 ```
 
 ### Configuration
@@ -76,16 +72,16 @@ OPENAI_API_KEY=your_openai_api_key_here
 
 ```bash
 # Lancer tous les workflows de test
-python main.py --all
+uv run main.py --all
 
 # Lancer seulement le workflow Writer-Reviewer
-python main.py --writer
+uv run main.py --writer
 
 # Lancer les workflows de recrutement
-python main.py --hiring
+uv run main.py --hiring
 
 # Afficher l'aide
-python main.py --help
+uv run main.py --help
 ```
 
 ### Utilisation programmatique
@@ -173,7 +169,7 @@ La documentation complète est disponible avec MkDocs :
 
 ```bash
 # Installer les dépendances de documentation
-pip install mkdocs mkdocs-material mkdocstrings[python]
+uv sync
 
 # Servir la documentation en local
 mkdocs serve
@@ -221,24 +217,6 @@ Accédez à la documentation sur : `http://localhost:8000`
 }
 ```
 
-## 🤝 Contribution
-
-1. Fork le projet
-2. Créez une branche pour votre fonctionnalité (`git checkout -b feature/nouvelle-fonctionnalite`)
-3. Committez vos changements (`git commit -am 'Ajout d'une nouvelle fonctionnalité'`)
-4. Poussez sur la branche (`git push origin feature/nouvelle-fonctionnalite`)
-5. Ouvrez une Pull Request
-
 ## 🛣️ Roadmap
 
-Voir [ROADMAP.md](ROADMAP.md) pour les fonctionnalités planifiées.
-
-## 📄 Licence
-
-Ce projet est sous licence MIT - voir le fichier [LICENSE](LICENSE) pour plus de détails.
-
-## 🙏 Remerciements
-
-- [Pydantic AI](https://github.com/pydantic/pydantic-ai) pour le framework d'agents
-- [Pydantic Graph](https://github.com/pydantic/pydantic-graph) pour la gestion des graphes
-- La communauté Python pour les outils et bibliothèques utilisés
+Voir [ROADMAP.md](ROADMAP.md) pour les fonctionnalités planifiées et l'évolution du framework.

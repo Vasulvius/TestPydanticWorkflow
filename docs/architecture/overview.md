@@ -255,37 +255,6 @@ class AgentFactory(IAgentFactory):
             raise ValueError(f"Unknown agent type: {agent_type}")
 ```
 
-### Strategy Pattern
-
-```python
-class ConditionEvaluator:
-    def __init__(self):
-        self.strategies = {
-            "simple": SimpleConditionStrategy(),
-            "complex": ComplexConditionStrategy(),
-            "temporal": TemporalConditionStrategy()
-        }
-    
-    def evaluate(self, condition: str, result: Any) -> bool:
-        strategy = self._get_strategy(condition)
-        return strategy.evaluate(condition, result)
-```
-
-### Observer Pattern
-
-```python
-class WorkflowExecutor:
-    def __init__(self):
-        self.observers: List[IWorkflowObserver] = []
-    
-    def add_observer(self, observer: IWorkflowObserver):
-        self.observers.append(observer)
-    
-    def _notify_node_executed(self, node_id: str, result: Any):
-        for observer in self.observers:
-            observer.on_node_executed(node_id, result)
-```
-
 ## Extensibilité
 
 ### Ajouter un nouveau type d'agent
@@ -313,53 +282,6 @@ class ConditionEvaluator:
     def _evaluate_special_conditions(self, condition: str, result: Dict, context: Dict) -> bool:
         if condition.startswith("custom_"):
             return self._evaluate_custom_condition(condition, result, context)
-```
-
-### Ajouter un observateur
-
-```python
-class MetricsObserver(IWorkflowObserver):
-    def on_node_executed(self, node_id: str, result: Any):
-        self.metrics.record_execution(node_id, len(str(result)))
-    
-    def on_workflow_completed(self, workflow_id: str, duration: float):
-        self.metrics.record_completion(workflow_id, duration)
-```
-
-## Tests et qualité
-
-### Architecture testable
-
-```python
-# Test d'intégration
-class TestWorkflowExecution:
-    def test_writer_reviewer_workflow(self):
-        # Given
-        mock_agent_factory = Mock()
-        executor = WorkflowExecutor(mock_agent_factory)
-        
-        # When
-        result = await executor.execute(workflow, input_data)
-        
-        # Then
-        assert result["final_result"] is not None
-```
-
-### Isolation des dépendances
-
-```python
-# Test unitaire
-class TestConditionEvaluator:
-    def test_boolean_condition(self):
-        # Given
-        evaluator = ConditionEvaluator()
-        result = {"approved": True}
-        
-        # When
-        is_approved = evaluator.evaluate("approved", result, {})
-        
-        # Then
-        assert is_approved is True
 ```
 
 ## Performance et optimisation
@@ -410,6 +332,6 @@ def validate_workflow_definition(workflow: Dict) -> List[str]:
 
 ## Prochaines étapes
 
-- 🔧 [Composants détaillés](components.md) - Architecture de chaque composant
-- 🚀 [Extension du framework](extending.md) - Guide pour ajouter des fonctionnalités
-- 📊 [API Reference](../api/interfaces.md) - Documentation technique complète
+- 🔧 [Syntaxe des workflows](../workflow-definition/syntax.md) - Comprendre la définition JSON
+- � [Conditions et transitions](../workflow-definition/conditions.md) - Gestion des conditions
+- � [Exemples pratiques](../examples/writer-reviewer.md) - Cas d'usage concrets

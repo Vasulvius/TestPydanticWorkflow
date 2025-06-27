@@ -323,7 +323,7 @@ for step in result['execution_history']:
 
 ```bash
 # Afficher tous les échanges
-python main.py --writer --detailed
+uv run main.py --writer --detailed
 ```
 
 ## Bonnes pratiques
@@ -371,5 +371,5 @@ def validate_input(self, data):
 ## Prochaines étapes
 
 - 🎯 [Conditions et transitions](conditions.md) - Logique conditionnelle basée sur les données
-- 🚨 [Gestion des erreurs](error-handling.md) - Que faire quand ça ne marche pas
-- 📋 [Exemples pratiques](../examples/writer-reviewer.md) - Voir des cas concrets
+-  [Exemples pratiques](../examples/writer-reviewer.md) - Voir des cas concrets
+- 🏗️ [Architecture](../architecture/overview.md) - Comprendre le fonctionnement interne
