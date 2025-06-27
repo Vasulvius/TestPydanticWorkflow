@@ -1,0 +1,79 @@
+site_name: Dynamic Agent Workflows
+site_description: Framework pour créer et exécuter des workflows d'agents IA dynamiques
+site_author: Team Dynamic Workflows
+
+theme:
+  name: material
+  language: fr
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      primary: blue
+      accent: cyan
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: blue
+      accent: cyan
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.path
+    - navigation.indexes
+    - search.highlight
+    - search.share
+    - content.code.copy
+    - content.code.annotate
+
+plugins:
+  - search:
+      lang: fr
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+  - footnotes
+  - toc:
+      permalink: true
+
+nav:
+  - Accueil: index.md
+  - Guide de démarrage:
+      - Installation: getting-started/installation.md
+      - Premier workflow: getting-started/first-workflow.md
+      - Exécution: getting-started/execution.md
+  - Définition des workflows:
+      - Syntaxe JSON: workflow-definition/syntax.md
+      - Types de nœuds: workflow-definition/node-types.md
+      - Conditions et transitions: workflow-definition/conditions.md
+      - Échange de données: workflow-definition/data-flow.md
+      - Gestion des erreurs: workflow-definition/error-handling.md
+  - Exemples:
+      - Writer-Reviewer: examples/writer-reviewer.md
+      - Processus de recrutement: examples/hiring-process.md
+      - Développement logiciel: examples/development.md
+  - Architecture:
+      - Vue d'ensemble: architecture/overview.md
+      - Composants: architecture/components.md
+      - Extension: architecture/extending.md
+  - API Reference:
+      - Interfaces: api/interfaces.md
+      - Agents: api/agents.md
+      - Exécuteurs: api/executors.md
+  - Roadmap: roadmap.md
