@@ -27,6 +27,8 @@ def register_content_tools(registry):
         if len([s for s in text.split(".") if len(s.strip()) > 100]) == 0:
             issues.append("Phrases trop courtes ou trop longues")
 
+        print(f"   [ContentTools] 📝 Vérification grammaticale: {len(issues)} problèmes détectés")
+
         return f"Issues trouvées: {'; '.join(issues) if issues else 'Aucune'}"
 
     @registry.register_tool("translate_text", "Traduction simple")

@@ -8,6 +8,7 @@ from src.blueprints import (
     ADVANCED_CONTENT_WORKFLOW,
     DEVELOPMENT_WORKFLOW,
     HIRING_WORKFLOW,
+    TOOLS_TEST_WORKFLOW,
     WRITER_REVIEWER_WORKFLOW,
 )
 
@@ -48,6 +49,35 @@ async def run_content_creation_with_tools(workflow_service):
     print("🏁 Article final:")
     print(result["final_result"])
     print(f"\n📊 Statistiques: {result['total_iterations']} itérations")
+    return result
+
+
+async def run_tools_test_workflow(workflow_service):
+    """Test spécifique pour les outils et itérations"""
+    print("=== Tools Testing Workflow ===")
+    print("🎯 Ce test vérifie:")
+    print("   • Utilisation effective des outils")
+    print("   • Gestion des itérations multiples")
+    print("   • Amélioration progressive du contenu")
+    print()
+
+    result = await workflow_service.execute_workflow_from_json(
+        TOOLS_TEST_WORKFLOW,
+        {"topic": "L'impact de ChatGPT sur le développement logiciel", "target_length": "400 mots", "style": "technique et informatif"},
+    )
+
+    print("🏁 Article final:")
+    print(result["final_result"])
+    print(f"\n📊 Statistiques: {result['total_iterations']} itérations")
+
+    # Analyse détaillée des itérations
+    print("\n🔍 Analyse des itérations:")
+    for node_id, count in result["node_iterations"].items():
+        if count > 1:
+            print(f"   • {node_id}: {count} itérations (boucle détectée)")
+        else:
+            print(f"   • {node_id}: {count} itération")
+
     return result
 
 
@@ -118,6 +148,7 @@ Exemples d'utilisation:
     # Flags pour les workflows spécifiques
     parser.add_argument("--writer", action="store_true", help="Lance le test Writer-Reviewer workflow")
     parser.add_argument("--content-tools", action="store_true", help="Lance le test Content Creation with Tools")
+    parser.add_argument("--tools-test", action="store_true", help="Lance le test des outils et itérations")
     # parser.add_argument("--dev", action="store_true", help="Lance le test Development workflow")
     parser.add_argument("--hiring-senior", action="store_true", help="Lance le test Hiring workflow avec candidat senior")
     parser.add_argument("--hiring-junior", action="store_true", help="Lance le test Hiring workflow avec candidat junior")
@@ -131,7 +162,7 @@ Exemples d'utilisation:
     args = parser.parse_args()
 
     # Si aucun flag n'est spécifié, lancer tous les tests par défaut
-    if not any([args.writer, args.content_tools, args.hiring_senior, args.hiring_junior, args.hiring, args.all]):
+    if not any([args.writer, args.content_tools, args.tools_test, args.hiring_senior, args.hiring_junior, args.hiring, args.all]):
         args.all = True
 
     workflow_service = WorkflowService()
@@ -148,6 +179,8 @@ Exemples d'utilisation:
             tests_to_run.append("writer")
         if args.content_tools:
             tests_to_run.append("content_tools")
+        if args.tools_test:
+            tests_to_run.append("tools_test")
         # if args.dev:
         #     tests_to_run.append("dev")
         if args.hiring or args.hiring_senior:
@@ -164,8 +197,10 @@ Exemples d'utilisation:
             result = await run_writer_reviewer_workflow(workflow_service)
         elif test == "content_tools":
             result = await run_content_creation_with_tools(workflow_service)
-        elif test == "dev":
-            result = await run_development_workflow(workflow_service)
+        elif test == "tools_test":
+            result = await run_tools_test_workflow(workflow_service)
+        # elif test == "dev":
+        #     result = await run_development_workflow(workflow_service)
         elif test == "hiring_senior":
             result = await run_hiring_workflow_senior(workflow_service)
         elif test == "hiring_junior":

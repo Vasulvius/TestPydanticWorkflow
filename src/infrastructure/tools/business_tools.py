@@ -17,6 +17,7 @@ def register_business_tools(registry):
         """Compte les mots dans un texte"""
         words = len(text.split())
         chars = len(text)
+        print(f"   [BusinessTools] 📝 Nombre de mots: {words}, Nombre de caractères: {chars}")
         return f"Mots: {words}, Caractères: {chars}"
 
     @registry.register_tool("current_time", "Retourne la date et heure actuelles")

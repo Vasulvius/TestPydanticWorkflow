@@ -220,6 +220,111 @@ RÉPONSE ATTENDUE: L'article complet, bien formaté, prêt à être publié.""",
     ],
 }
 
+TOOLS_TEST_WORKFLOW = {
+    "name": "Tools Testing Workflow",
+    "description": "Workflow pour tester l'utilisation des outils et les itérations",
+    "start_node": "researcher",
+    "nodes": [
+        {
+            "id": "researcher",
+            "name": "Research Agent",
+            "type": "process",
+            "agent_config": {
+                "type": "pydantic",
+                "model": "openai:gpt-4o-mini",
+                "name": "Researcher",
+                "system_prompt": """Tu es un chercheur qui DOIT utiliser ses outils.
+
+INSTRUCTIONS OBLIGATOIRES:
+1. Utilise l'outil 'current_time' pour obtenir la date
+2. Utilise l'outil 'word_count' pour analyser ton texte de sortie
+3. Mentionne explicitement dans ta réponse quand tu utilises chaque outil
+
+RÉPONSE ATTENDUE:
+Un rapport de recherche incluant :
+- La date actuelle obtenue via l'outil
+- Le nombre de mots de ton rapport via l'outil
+- Des informations pertinentes sur le sujet""",
+            },
+            "tools": ["current_time", "word_count"],
+        },
+        {
+            "id": "strict_reviewer",
+            "name": "Strict Reviewer",
+            "type": "decision",
+            "max_iterations": 3,
+            "agent_config": {
+                "type": "pydantic",
+                "model": "openai:gpt-4o-mini",
+                "name": "StrictReviewer",
+                "node_type": "decision",
+                "system_prompt": """Tu es un réviseur TRÈS STRICT qui teste les itérations.
+
+STRATÉGIE DE TEST:
+- Itération 1: TOUJOURS rejeter (approved: false)
+- Itération 2: Approuver si qualité correcte (approved: true)
+- Itération 3+: Forcer l'approbation (final_review: true)
+
+UTILISE L'OUTIL word_count pour analyser le contenu.
+
+RÉPONSE JSON OBLIGATOIRE:
+{
+  "approved": true/false,
+  "feedback": "commentaires spécifiques",
+  "iteration_number": <numéro_actuel>,
+  "word_analysis": "résultat de word_count",
+  "final_review": false
+}""",
+            },
+            "tools": ["word_count"],
+        },
+        {
+            "id": "writer",
+            "name": "Content Writer",
+            "type": "process",
+            "max_iterations": 3,
+            "agent_config": {
+                "type": "pydantic",
+                "model": "openai:gpt-4o-mini",
+                "name": "Writer",
+                "system_prompt": """Tu es un rédacteur qui s'améliore à chaque itération.
+
+INSTRUCTIONS:
+1. Utilise l'outil 'word_count' pour vérifier la longueur
+2. Si tu reçois du feedback, améliore le contenu
+3. Mentionne le numéro d'itération dans ton article
+4. Intègre les suggestions de façon visible
+
+OBJECTIF: Créer un article qui s'améliore à chaque révision.""",
+            },
+            "tools": ["word_count", "grammar_check"],
+        },
+        {
+            "id": "finalizer",
+            "name": "Final Processor",
+            "type": "process",
+            "agent_config": {
+                "type": "pydantic",
+                "model": "openai:gpt-4o-mini",
+                "name": "Finalizer",
+                "system_prompt": """Tu présentes le résultat final avec statistiques.
+
+Utilise l'outil word_count pour donner les métriques finales.""",
+            },
+            "tools": ["word_count"],
+        },
+        {"id": "end", "name": "End", "type": "end", "agent_config": {}},
+    ],
+    "edges": [
+        {"from_node": "researcher", "to_node": "writer"},
+        {"from_node": "writer", "to_node": "strict_reviewer"},
+        {"from_node": "strict_reviewer", "to_node": "writer", "condition": "rejected_not_final"},
+        {"from_node": "strict_reviewer", "to_node": "finalizer", "condition": "approved"},
+        {"from_node": "strict_reviewer", "to_node": "finalizer", "condition": "final_review"},
+        {"from_node": "finalizer", "to_node": "end"},
+    ],
+}
+
 DEVELOPMENT_WORKFLOW = {
     "name": "Software Development Workflow",
     "description": "Workflow de développement avec analyse, développement et tests",

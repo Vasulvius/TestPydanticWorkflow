@@ -45,4 +45,6 @@ def register_base_tools(registry):
         """Returns the current date and time"""
         from datetime import datetime
 
+        print(f"   [BaseTools] 🕒 Current time tool registered: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}")
+
         return datetime.now().strftime("%Y-%m-%d %H:%M:%S")

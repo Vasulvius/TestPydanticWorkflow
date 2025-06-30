@@ -46,6 +46,9 @@ class PydanticAgent(IAgent):
         # Ajouter les outils si disponibles
         if self.tools:
             agent_kwargs["tools"] = self.tools
+            print(
+                f"   [PydanticAgent] 🔧 Agent {self.name} configuré avec {len(self.tools)} outils: {[tool.function.__name__ for tool in self.tools]}"
+            )
 
         self.agent = Agent(**agent_kwargs)
 
