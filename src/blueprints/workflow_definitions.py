@@ -1,3 +1,37 @@
+MONO_AGENT_WITH_TOOLS = {
+    "name": "Mono Agent with Tools",
+    "description": "Un seul agent avec des outils pour traiter les messages utilisateur",
+    "start_node": "assistant",
+    "nodes": [
+        {
+            "id": "assistant",
+            "name": "Assistant with Tools",
+            "type": "process",
+            "agent_config": {
+                "type": "pydantic",
+                "model": "openai:gpt-4o-mini",
+                "name": "AssistantAgent",
+                "system_prompt": """Tu es un assistant intelligent avec accès à plusieurs outils.
+
+INSTRUCTIONS:
+1. Analyse la demande de l'utilisateur
+2. Utilise les outils appropriés pour enrichir ta réponse
+3. Fournis une réponse complète et utile
+
+OUTILS DISPONIBLES:
+- word_count: Pour analyser la longueur des textes
+- current_time: Pour obtenir la date/heure actuelle
+- grammar_check: Pour vérifier la grammaire
+
+Utilise ces outils quand ils sont pertinents pour répondre à la demande.""",
+            },
+            "tools": ["word_count", "current_time", "grammar_check"],
+        },
+        {"id": "end", "name": "End", "type": "end", "agent_config": {}},
+    ],
+    "edges": [{"from_node": "assistant", "to_node": "end"}],
+}
+
 WRITER_REVIEWER_WORKFLOW = {
     "name": "Writer-Reviewer Workflow",
     "description": "Workflow d'écriture avec manager, révision et feedback",
