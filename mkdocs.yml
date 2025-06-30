@@ -61,6 +61,7 @@ nav:
       - Syntaxe JSON: workflow-definition/syntax.md
       - Conditions et transitions: workflow-definition/conditions.md
       - Échange de données: workflow-definition/data-flow.md
+      - Guide des outils: workflow-definition/tools-guide.md
   - Exemples:
       - Writer-Reviewer: examples/writer-reviewer.md
   - Architecture:

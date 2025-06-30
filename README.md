@@ -219,4 +219,4 @@ Accédez à la documentation sur : `http://localhost:8000`
 
 ## 🛣️ Roadmap
 
-Voir [ROADMAP.md](ROADMAP.md) pour les fonctionnalités planifiées et l'évolution du framework.
+Voir [roadmap](docs/roadmap.md) pour les fonctionnalités planifiées et l'évolution du framework.

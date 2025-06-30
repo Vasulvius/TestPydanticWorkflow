@@ -39,7 +39,7 @@ Devenir le framework de référence pour la création et l'exécution de workflo
 ## 🔧 Version 1.1 - Amélioration de la robustesse
 
 ### Nouvelles fonctionnalités
-- [ ] Possibilité de créer des tools et de les donner à des agents
+- [x] Possibilité de créer des tools et de les donner à des agents
 
 ### Parsing et validation
 - [ ] Evaluation de la viabilité d'un graphe

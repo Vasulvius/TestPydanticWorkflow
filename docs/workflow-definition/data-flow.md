@@ -371,5 +371,6 @@ def validate_input(self, data):
 ## Prochaines étapes
 
 - 🎯 [Conditions et transitions](conditions.md) - Logique conditionnelle basée sur les données
+- 🔧[Guide des outils](tools-guide.md) - Comment donner des outils aux agents
 -  [Exemples pratiques](../examples/writer-reviewer.md) - Voir des cas concrets
 - 🏗️ [Architecture](../architecture/overview.md) - Comprendre le fonctionnement interne

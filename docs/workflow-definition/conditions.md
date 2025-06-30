@@ -378,5 +378,6 @@ result = {"approved": true, "feedback": "Content approved"}  # ✅
 ## Prochaines étapes
 
 - 📊 [Échange de données](data-flow.md) - Comment les données circulent
+- 🔧[Guide des outils](tools-guide.md) - Comment donner des outils aux agents
 -  [Exemples pratiques](../examples/writer-reviewer.md) - Voir des conditions en action
 - 🏗️ [Architecture](../architecture/overview.md) - Comprendre le fonctionnement interne
