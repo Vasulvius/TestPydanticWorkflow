@@ -89,6 +89,137 @@ WRITER_REVIEWER_WORKFLOW = {
     ],
 }
 
+ADVANCED_CONTENT_WORKFLOW = {
+    "name": "Advanced Content Creation with Review",
+    "description": "Workflow complet avec recherche, rédaction et révision",
+    "start_node": "researcher",
+    "nodes": [
+        {
+            "id": "researcher",
+            "name": "Content Researcher",
+            "type": "process",
+            "agent_config": {
+                "type": "pydantic",
+                "model": "openai:gpt-4o-mini",
+                "name": "Researcher",
+                "system_prompt": """Tu es un chercheur expert. Effectue une recherche approfondie sur le sujet donné.
+
+INSTRUCTIONS:
+1. Analyse le sujet et l'audience cible
+2. Identifie 5-7 points clés à couvrir
+3. Trouve des exemples concrets et actuels
+4. Propose une structure logique pour l'article
+
+RÉPONSE:
+- **Sujet analysé**: [résumé du sujet]
+- **Points clés**: [liste des points principaux]
+- **Exemples**: [exemples concrets à inclure]
+- **Structure proposée**: [plan de l'article]
+- **Angle d'approche**: [perspective à adopter]""",
+            },
+            "tools": ["current_time", "http_request"],
+        },
+        {
+            "id": "writer",
+            "name": "Content Writer",
+            "type": "process",
+            "max_iterations": 3,
+            "agent_config": {
+                "type": "pydantic",
+                "model": "openai:gpt-4o-mini",
+                "name": "Writer",
+                "system_prompt": """Tu es un rédacteur expert. Crée un article de qualité basé sur les recherches.
+
+INSTRUCTIONS:
+1. Suis la structure proposée par le chercheur
+2. Écris un titre accrocheur (H1)
+3. Rédige une introduction engageante
+4. Développe chaque section avec des sous-titres (H2, H3)
+5. Inclus les exemples fournis par le chercheur
+6. Termine par une conclusion avec appel à l'action
+7. Utilise les outils pour vérifier la qualité
+
+FORMAT:
+# Titre Principal
+## Introduction
+[contenu introduction]
+
+## Section 1
+[contenu avec exemples]
+
+## Section 2
+[contenu avec exemples]
+
+## Conclusion
+[résumé et appel à l'action]""",
+            },
+            "tools": ["word_count", "grammar_check"],
+        },
+        {
+            "id": "reviewer",
+            "name": "Content Reviewer",
+            "type": "decision",
+            "max_iterations": 3,
+            "agent_config": {
+                "type": "pydantic",
+                "model": "openai:gpt-4o-mini",
+                "name": "Reviewer",
+                "node_type": "decision",
+                "system_prompt": """Tu es un réviseur expert. Évalue la qualité de l'article.
+
+CRITÈRES D'ÉVALUATION:
+- Structure claire avec titres et sous-titres
+- Contenu informatif et pertinent
+- Exemples concrets et utiles
+- Respect du ton et de l'audience
+- Longueur appropriée
+- Qualité rédactionnelle
+
+RÉPONSE JSON OBLIGATOIRE:
+{
+  "approved": true/false,
+  "feedback": "commentaires détaillés sur les améliorations",
+  "score": 0-100,
+  "missing_elements": ["liste des éléments manquants"],
+  "final_review": false
+}""",
+            },
+            "tools": ["word_count"],
+        },
+        {
+            "id": "finalizer",
+            "name": "Content Finalizer",
+            "type": "process",
+            "agent_config": {
+                "type": "pydantic",
+                "model": "openai:gpt-4o-mini",
+                "name": "Finalizer",
+                "system_prompt": """Tu es responsable de présenter l'article final.
+
+INSTRUCTIONS:
+Tu recevras soit :
+1. Un article approuvé par le reviewer
+2. Un article après le nombre maximum d'itérations
+
+Dans les deux cas, extrais et présente UNIQUEMENT l'article final, sans commentaires ni métadonnées.
+
+Si tu reçois un objet JSON avec des métadonnées, trouve l'article dans les données d'historique et présente-le proprement.
+
+RÉPONSE ATTENDUE: L'article complet, bien formaté, prêt à être publié.""",
+            },
+        },
+        {"id": "end", "name": "End", "type": "end", "agent_config": {}},
+    ],
+    "edges": [
+        {"from_node": "researcher", "to_node": "writer"},
+        {"from_node": "writer", "to_node": "reviewer"},
+        {"from_node": "reviewer", "to_node": "writer", "condition": "rejected_not_final"},
+        {"from_node": "reviewer", "to_node": "finalizer", "condition": "approved"},
+        {"from_node": "reviewer", "to_node": "finalizer", "condition": "final_review"},
+        {"from_node": "finalizer", "to_node": "end"},
+    ],
+}
+
 DEVELOPMENT_WORKFLOW = {
     "name": "Software Development Workflow",
     "description": "Workflow de développement avec analyse, développement et tests",

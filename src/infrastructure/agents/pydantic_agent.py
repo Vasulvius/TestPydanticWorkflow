@@ -1,17 +1,19 @@
 import json
 import re
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 from pydantic_ai import Agent
+from pydantic_ai.tools import Tool
 
 from ...domain.interfaces.i_agent import IAgent
 
 
 class PydanticAgent(IAgent):
-    def __init__(self, agent_config: Dict[str, Any]):
+    def __init__(self, agent_config: Dict[str, Any], tools: Optional[List[Tool]] = None):
         self.config = agent_config
-        self.agent = Agent(model=agent_config.get("model", "openai:gpt-4o-mini"), system_prompt=agent_config.get("system_prompt", ""))
         self.name = agent_config.get("name", "GenericAgent")
+        self.tools = tools or []
+        self._create_agent()
 
     async def execute(self, input_data: Any, context: Dict[str, Any]) -> Any:
         # Préparer le prompt avec les données d'entrée
@@ -31,6 +33,21 @@ class PydanticAgent(IAgent):
                 return {"error": "parsing_failed", "raw_response": str(result.data)}
 
         return result.data
+
+    def set_tools(self, tools: List[Tool]) -> None:
+        """Met à jour les outils et recrée l'agent"""
+        self.tools = tools
+        self._create_agent()
+
+    def _create_agent(self):
+        """Crée l'agent Pydantic AI avec les outils"""
+        agent_kwargs = {"model": self.config.get("model", "openai:gpt-4o-mini"), "system_prompt": self.config.get("system_prompt", "")}
+
+        # Ajouter les outils si disponibles
+        if self.tools:
+            agent_kwargs["tools"] = self.tools
+
+        self.agent = Agent(**agent_kwargs)
 
     def _is_decision_agent(self) -> bool:
         return "decision" in self.config.get("node_type", "") or "reviewer" in self.name.lower() or "tester" in self.name.lower()

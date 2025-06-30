@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 
 from src.application.services import WorkflowService
 from src.blueprints import (
+    ADVANCED_CONTENT_WORKFLOW,
     DEVELOPMENT_WORKFLOW,
     HIRING_WORKFLOW,
     WRITER_REVIEWER_WORKFLOW,
@@ -27,6 +28,26 @@ async def run_writer_reviewer_workflow(workflow_service):
         },
     )
     print_workflow_summary(result)
+    return result
+
+
+async def run_content_creation_with_tools(workflow_service):
+    """Test du workflow avancé avec révision"""
+    print("=== Advanced Content Creation Workflow ===")
+    result = await workflow_service.execute_workflow_from_json(
+        ADVANCED_CONTENT_WORKFLOW,
+        {
+            "topic": "Les 3 outils IA incontournables pour développeurs Python en 2025",
+            "keywords": "IA, développeurs Python, outils, productivité, automatisation, 2025",
+            "target_length": "300 mots",
+            "tone": "technique mais accessible",
+            "audience": "développeurs Python de niveau intermédiaire à avancé",
+            "format": "guide pratique avec exemples de code",
+        },
+    )
+    print("🏁 Article final:")
+    print(result["final_result"])
+    print(f"\n📊 Statistiques: {result['total_iterations']} itérations")
     return result
 
 
@@ -96,6 +117,7 @@ Exemples d'utilisation:
 
     # Flags pour les workflows spécifiques
     parser.add_argument("--writer", action="store_true", help="Lance le test Writer-Reviewer workflow")
+    parser.add_argument("--content-tools", action="store_true", help="Lance le test Content Creation with Tools")
     # parser.add_argument("--dev", action="store_true", help="Lance le test Development workflow")
     parser.add_argument("--hiring-senior", action="store_true", help="Lance le test Hiring workflow avec candidat senior")
     parser.add_argument("--hiring-junior", action="store_true", help="Lance le test Hiring workflow avec candidat junior")
@@ -109,7 +131,7 @@ Exemples d'utilisation:
     args = parser.parse_args()
 
     # Si aucun flag n'est spécifié, lancer tous les tests par défaut
-    if not any([args.writer, args.dev, args.hiring_senior, args.hiring_junior, args.hiring, args.all]):
+    if not any([args.writer, args.content_tools, args.hiring_senior, args.hiring_junior, args.hiring, args.all]):
         args.all = True
 
     workflow_service = WorkflowService()
@@ -124,8 +146,10 @@ Exemples d'utilisation:
     else:
         if args.writer:
             tests_to_run.append("writer")
-        if args.dev:
-            tests_to_run.append("dev")
+        if args.content_tools:
+            tests_to_run.append("content_tools")
+        # if args.dev:
+        #     tests_to_run.append("dev")
         if args.hiring or args.hiring_senior:
             tests_to_run.append("hiring_senior")
         if args.hiring or args.hiring_junior:
@@ -138,6 +162,8 @@ Exemples d'utilisation:
 
         if test == "writer":
             result = await run_writer_reviewer_workflow(workflow_service)
+        elif test == "content_tools":
+            result = await run_content_creation_with_tools(workflow_service)
         elif test == "dev":
             result = await run_development_workflow(workflow_service)
         elif test == "hiring_senior":

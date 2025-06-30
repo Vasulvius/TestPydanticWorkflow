@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 
@@ -11,3 +11,4 @@ class WorkflowNode(BaseModel):
     type: NodeType
     max_iterations: Optional[int] = None
     agent_config: Dict[str, Any]
+    tools: Optional[List[str]] = None

@@ -96,7 +96,7 @@ class WorkflowExecutor(IWorkflowExecutor):
             input_data = enhanced_input
 
         # Créer et exécuter l'agent
-        agent = self.agent_factory.create_agent(node.agent_config)
+        agent = self.agent_factory.create_agent(node.agent_config, node)
         result = await agent.execute(input_data, context)
 
         return result
