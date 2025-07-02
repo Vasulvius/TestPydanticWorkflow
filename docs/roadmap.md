@@ -40,6 +40,7 @@ Devenir le framework de référence pour la création et l'exécution de workflo
 
 ### Nouvelles fonctionnalités
 - [x] Possibilité de créer des tools et de les donner à des agents
+- [ ] Ajouter la possibilité de gérer des providers maison
 
 ### Parsing et validation
 - [ ] Evaluation de la viabilité d'un graphe
